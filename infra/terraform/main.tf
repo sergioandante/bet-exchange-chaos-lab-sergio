@@ -77,6 +77,28 @@ resource "aws_eks_cluster" "this" {
   }
 }
 
+# Plantilla de lanzamiento de los nodos. Sube el "hop limit" del servicio de
+# metadatos (IMDS) a 2: con el valor por defecto (1) los pods NO pueden leer las
+# credenciales del rol del nodo y el controlador EBS CSI entra en CrashLoopBackOff
+# (el addon se queda en CREATING y el apply falla por timeout).
+resource "aws_launch_template" "nodes" {
+  name_prefix = "${var.project}-nodes-"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size = 20
+      volume_type = "gp3"
+    }
+  }
+}
+
 resource "aws_eks_node_group" "app" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.project}-nodes"
@@ -84,7 +106,11 @@ resource "aws_eks_node_group" "app" {
   subnet_ids      = data.aws_subnets.selected.ids
   instance_types  = [var.node_instance_type]
   capacity_type   = "ON_DEMAND"
-  disk_size       = 20
+
+  launch_template {
+    id      = aws_launch_template.nodes.id
+    version = aws_launch_template.nodes.latest_version
+  }
 
   scaling_config {
     desired_size = var.node_count

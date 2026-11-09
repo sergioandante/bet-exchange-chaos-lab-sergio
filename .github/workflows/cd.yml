@@ -8,6 +8,11 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+  # TEMPORAL (validacion previa al merge): permite ejecutar el CD desde la rama
+  # del PR para obtener evidencia real. Quitar antes de fusionar a main.
+  push:
+    branches: [feat/tests-and-ci]
+    paths: ['.github/workflows/cd.yml']
 
 permissions:
   contents: read
@@ -24,7 +29,7 @@ env:
 jobs:
   publish:
     name: Construir y publicar imágenes en ECR
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.meta.outputs.tag }}
