@@ -1,0 +1,199 @@
+{
+    "metrics": {
+        "checks": {
+            "passes": 218913,
+            "fails": 0,
+            "value": 1
+        },
+        "iteration_duration": {
+            "max": 3426.4685,
+            "p(90)": 459.83656,
+            "p(95)": 690.83664,
+            "avg": 341.0990489683148,
+            "min": 114.1604,
+            "med": 304.2194
+        },
+        "http_req_duration": {
+            "p(90)": 275.5810600000001,
+            "p(95)": 525.6182799999996,
+            "avg": 190.31467768545554,
+            "min": 100.2263,
+            "med": 129.9512,
+            "max": 3198.9262,
+            "thresholds": {
+                "p(95)<1500": false
+            }
+        },
+        "http_req_failed": {
+            "passes": 1892,
+            "fails": 217037,
+            "thresholds": {
+                "rate<0.05": false
+            },
+            "value": 0.008642071173759529
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_sending": {
+            "p(95)": 0,
+            "avg": 0.0015798843460665308,
+            "min": 0,
+            "med": 0,
+            "max": 4.6484,
+            "p(90)": 0
+        },
+        "vus_max": {
+            "value": 300,
+            "min": 300,
+            "max": 300
+        },
+        "http_reqs": {
+            "count": 218929,
+            "rate": 454.00530617314763
+        },
+        "http_req_waiting": {
+            "avg": 190.1481650046322,
+            "min": 100.2263,
+            "med": 129.8173,
+            "max": 3198.9262,
+            "p(90)": 275.4652800000003,
+            "p(95)": 525.4625999999989
+        },
+        "data_sent": {
+            "count": 35585985,
+            "rate": 73796.6464716782
+        },
+        "data_received": {
+            "count": 200640393,
+            "rate": 416079.1994421281
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 3198.9262,
+            "p(90)": 275.3113599999998,
+            "p(95)": 525.7408199999999,
+            "avg": 190.35988294161467,
+            "min": 100.2263,
+            "med": 129.9122
+        },
+        "http_req_blocked": {
+            "avg": 0.15335064792695358,
+            "min": 0,
+            "med": 0,
+            "max": 186.6243,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_receiving": {
+            "med": 0,
+            "max": 285.2832,
+            "p(90)": 0.5763,
+            "p(95)": 1.0179,
+            "avg": 0.16493279647739845,
+            "min": 0
+        },
+        "vus": {
+            "value": 1,
+            "min": 0,
+            "max": 300
+        },
+        "iterations": {
+            "count": 218913,
+            "rate": 453.9721260786934
+        },
+        "http_req_connecting": {
+            "p(95)": 0,
+            "avg": 0.15274010478282907,
+            "min": 0,
+            "med": 0,
+            "max": 186.6243,
+            "p(90)": 0
+        }
+    },
+    "setup_data": {
+        "markets": [
+            1,
+            2,
+            17,
+            18,
+            9,
+            10,
+            13,
+            14,
+            5,
+            6
+        ],
+        "odds": [
+            3,
+            6,
+            9,
+            12,
+            111,
+            114,
+            117,
+            120,
+            123,
+            57,
+            60,
+            63,
+            66,
+            84,
+            87,
+            90,
+            93,
+            30,
+            33,
+            36,
+            39,
+            42
+        ]
+    },
+    "root_group": {
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "mercado 200": {
+                    "name": "mercado 200",
+                    "path": "::mercado 200",
+                    "id": "4d1701bd37af1a5873454ba301a20450",
+                    "passes": 54857,
+                    "fails": 0
+                },
+                "cuotas 200": {
+                    "fails": 0,
+                    "name": "cuotas 200",
+                    "path": "::cuotas 200",
+                    "id": "4ffdf05987b027b296ccfcf89da8b30c",
+                    "passes": 32887
+                },
+                "eventos 200": {
+                    "name": "eventos 200",
+                    "path": "::eventos 200",
+                    "id": "0227a31b3b4d99644395ba8c83d6d7eb",
+                    "passes": 87527,
+                    "fails": 0
+                },
+                "apuesta 200/402": {
+                    "name": "apuesta 200/402",
+                    "path": "::apuesta 200/402",
+                    "id": "f2742164faeead00ced5d514ac273387",
+                    "passes": 32750,
+                    "fails": 0
+                },
+                "stats 200": {
+                    "name": "stats 200",
+                    "path": "::stats 200",
+                    "id": "372ed7a2e9a6ed3bef752e28c5df1a14",
+                    "passes": 10892,
+                    "fails": 0
+                }
+            },
+        "name": "",
+        "path": ""
+    }
+}

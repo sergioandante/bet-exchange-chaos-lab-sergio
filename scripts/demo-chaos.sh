@@ -8,7 +8,8 @@ LB="$(kubectl -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingr
 URL="http://${LB}/api/v1/health"
 
 probe() {  # lanza peticiones durante $1 segundos y cuenta resultados
-  local secs="$1" ok=0 bad=0 end=$((SECONDS + secs))
+  local secs="$1" ok=0 bad=0 end
+  end=$((SECONDS + secs))
   while [ $SECONDS -lt $end ]; do
     code="$(curl -s -o /dev/null -m 2 -w '%{http_code}' "$URL" || echo 000)"
     if [ "$code" = "200" ]; then ok=$((ok+1)); else bad=$((bad+1)); fi
