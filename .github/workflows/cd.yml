@@ -121,3 +121,4 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 # re-ejecucion: infraestructura ya estable
+# scripts con bit de ejecucion
