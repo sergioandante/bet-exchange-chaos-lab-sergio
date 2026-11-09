@@ -120,3 +120,4 @@ jobs:
             kubectl -n kuber-app get deploy,hpa,pods -o wide 2>/dev/null || true
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+# re-ejecucion: infraestructura ya estable
