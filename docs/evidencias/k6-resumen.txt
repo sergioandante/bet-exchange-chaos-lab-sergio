@@ -1,0 +1,45 @@
+mercado   [ 100% ] 001/300 VUs  8m00.0s/8m00.0s
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✓ 'p(95)<1500' p(95)=525.61ms
+
+    http_req_failed
+    ✓ 'rate<0.05' rate=0.86%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 218913  453.972126/s
+    checks_succeeded...: 100.00% 218913 out of 218913
+    checks_failed......: 0.00%   0 out of 218913
+
+    ✓ mercado 200
+    ✓ cuotas 200
+    ✓ eventos 200
+    ✓ apuesta 200/402
+    ✓ stats 200
+
+    HTTP
+    http_req_duration..............: avg=190.31ms min=100.22ms med=129.95ms max=3.19s p(90)=275.58ms p(95)=525.61ms
+      { expected_response:true }...: avg=190.35ms min=100.22ms med=129.91ms max=3.19s p(90)=275.31ms p(95)=525.74ms
+    http_req_failed................: 0.86%  1892 out of 218929
+    http_reqs......................: 218929 454.005306/s
+
+    EXECUTION
+    iteration_duration.............: avg=341.09ms min=114.16ms med=304.21ms max=3.42s p(90)=459.83ms p(95)=690.83ms
+    iterations.....................: 218913 453.972126/s
+    vus............................: 1      min=0              max=300
+    vus_max........................: 300    min=300            max=300
+
+    NETWORK
+    data_received..................: 201 MB 416 kB/s
+    data_sent......................: 36 MB  74 kB/s
+
+
+
+
+running (8m02.2s), 000/300 VUs, 218913 complete and 0 interrupted iterations
+mercado ✓ [ 100% ] 000/300 VUs  8m0s

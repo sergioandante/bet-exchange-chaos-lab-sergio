@@ -1,0 +1,29 @@
+=== Estado inicial ===
+NAME                             READY   STATUS    RESTARTS   AGE     IP              NODE                            NOMINATED NODE   READINESS GATES
+kuber-backend-74549df74b-7vfht   1/1     Running   0          2m30s   172.31.37.102   ip-172-31-47-13.ec2.internal    <none>           <none>
+kuber-backend-74549df74b-snznf   1/1     Running   0          2m39s   172.31.89.5     ip-172-31-85-188.ec2.internal   <none>           <none>
+
+=== 1. Se mata un pod del backend ===
+    eliminando kuber-backend-74549df74b-7vfht
+pod "kuber-backend-74549df74b-7vfht" deleted from kuber-app namespace
+    peticiones OK=29  fallidas=1
+NAME                             READY   STATUS    RESTARTS   AGE
+kuber-backend-74549df74b-snznf   1/1     Running   0          3m9s
+kuber-backend-74549df74b-xmt6z   1/1     Running   0          27s
+
+=== 2. Se mata el pod de Postgres (el backend degrada, no se reinicia) ===
+pod "kuber-postgres-0" deleted from kuber-data namespace
+    /events -> 000000   |  1/1/Running/r0 1/1/Running/r0 
+    /events -> 000000   |  1/1/Running/r0 0/1/Running/r0 
+    /events -> 503   |  0/1/Running/r0 0/1/Running/r0 
+    /events -> 200   |  1/1/Running/r0 1/1/Running/r0 
+    /events -> 200   |  1/1/Running/r0 1/1/Running/r0 
+    /events -> 200   |  1/1/Running/r0 1/1/Running/r0 
+statefulset rolling update complete 1 pods at revision kuber-postgres-94576bd76...
+    Postgres recuperado. Reinicios del backend (deben ser 0 por esta causa):
+    kuber-backend-74549df74b-snznf  reinicios=0
+    kuber-backend-74549df74b-xmt6z  reinicios=0
+
+=== 3. Se comprueba la consistencia del dinero tras el fallo ===
+{"pod":"kuber-backend-74549df74b-snznf","user_id":1,"available":262.23,"exposure":350.25,"currency":"EUR","ledger_sum":262.23,"drift":0.0}
+    (drift debe ser 0)

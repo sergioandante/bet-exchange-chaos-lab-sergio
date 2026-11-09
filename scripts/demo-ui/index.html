@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Demo HPA - Chaos Lab</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:0;background:#0f172a;color:#f1f5f9}
+  header{padding:16px 28px;background:#1e293b;display:flex;justify-content:space-between;align-items:center}
+  h1{margin:0;font-size:24px} .sub{color:#94a3b8;font-size:14px}
+  main{padding:20px 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{background:#1e293b;border-radius:10px;padding:16px}
+  .big{font-size:64px;font-weight:bold;line-height:1} .lbl{color:#94a3b8;font-size:14px;margin-top:6px}
+  .wide{grid-column:span 4} .half{grid-column:span 2}
+  button{font-size:18px;padding:12px 22px;border:0;border-radius:8px;cursor:pointer;margin-right:10px;font-weight:bold}
+  .go{background:#22c55e;color:#052e16} .stop{background:#ef4444;color:#fff} .alt{background:#38bdf8;color:#082f49}
+  .pods{display:flex;flex-wrap:wrap;gap:10px}
+  .pod{width:84px;padding:10px 0;text-align:center;border-radius:8px;background:#334155;font-size:13px}
+  .pod.ok{background:#16a34a} .pod.wait{background:#ca8a04} .pod.term{background:#991b1b}
+  canvas{width:100%;height:300px;background:#0b1220;border-radius:8px}
+  .hot{color:#f87171} .cool{color:#4ade80}
+  #msg{margin-left:10px;color:#94a3b8}
+</style></head><body>
+<header><div><h1>Chaos Lab - Autoescalado (HPA) en vivo</h1>
+<div class="sub" id="lb">conectando...</div></div><div class="sub" id="clock"></div></header>
+<main>
+  <div class="card"><div class="big" id="rep">-</div><div class="lbl">Réplicas del backend (mín <span id="min">2</span> / máx <span id="max">8</span>)</div></div>
+  <div class="card"><div class="big" id="des">-</div><div class="lbl">Réplicas deseadas por el HPA</div></div>
+  <div class="card"><div class="big" id="cpu">-</div><div class="lbl">CPU media (objetivo 70 %)</div></div>
+  <div class="card"><div class="big" id="vus">0</div><div class="lbl">Usuarios virtuales (k6)</div></div>
+  <div class="card wide">
+    <button class="go" onclick="start('spike')">Lanzar carga: pico rápido (~4 min)</button>
+    <button class="alt" onclick="start('ramp')">Lanzar carga: rampa (~8 min)</button>
+    <button class="stop" onclick="stopLoad()">Parar carga</button><span id="msg"></span>
+  </div>
+  <div class="card wide"><div class="lbl" style="margin:0 0 8px">Réplicas (verde) y CPU % (naranja, línea blanca = objetivo 70 %)</div><canvas id="ch" width="1600" height="300"></canvas></div>
+  <div class="card wide"><div class="lbl" style="margin:0 0 10px">Pods del backend (verde = listo, amarillo = arrancando, rojo = terminando)</div><div class="pods" id="pods"></div></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+async function start(p){$('msg').textContent='lanzando...';const r=await (await fetch('/api/load/start?profile='+p,{method:'POST'})).json();$('msg').textContent=r.result}
+async function stopLoad(){const r=await (await fetch('/api/load/stop',{method:'POST'})).json();$('msg').textContent=r.result}
+function draw(h){
+  const c=$('ch'),g=c.getContext('2d'),W=c.width,H=c.height,m=40;g.clearRect(0,0,W,H);
+  g.strokeStyle='#334155';g.fillStyle='#94a3b8';g.font='14px Arial';
+  for(let v=0;v<=8;v+=2){const y=H-m-(H-2*m)*v/8;g.beginPath();g.moveTo(m,y);g.lineTo(W-m,y);g.stroke();g.fillText(v,8,y+4)}
+  const yc=v=>H-m-(H-2*m)*Math.min(v,200)/200;
+  g.strokeStyle='#fff';g.setLineDash([4,6]);g.beginPath();g.moveTo(m,yc(70));g.lineTo(W-m,yc(70));g.stroke();g.setLineDash([]);
+  if(h.length<2)return;const n=h.length,X=i=>m+(W-2*m)*i/(n-1);
+  g.lineWidth=3;g.strokeStyle='#fb923c';g.beginPath();h.forEach((p,i)=>{const y=yc(p[2]||0);i?g.lineTo(X(i),y):g.moveTo(X(i),y)});g.stroke();
+  g.strokeStyle='#22c55e';g.beginPath();h.forEach((p,i)=>{const y=H-m-(H-2*m)*p[1]/8;if(i){g.lineTo(X(i),H-m-(H-2*m)*h[i-1][1]/8)}else g.moveTo(X(i),y);g.lineTo(X(i),y)});g.stroke();
+}
+async function tick(){
+  try{const s=await (await fetch('/api/status')).json();
+    $('lb').textContent=s.lb?('Balanceador: http://'+s.lb):'sin balanceador';
+    $('clock').textContent=new Date().toLocaleTimeString()+(s.error?'  |  error: '+s.error:'');
+    if(s.hpa){$('rep').textContent=s.hpa.current;$('des').textContent=s.hpa.desired;
+      $('min').textContent=s.hpa.min;$('max').textContent=s.hpa.max;
+      $('cpu').textContent=s.hpa.cpu==null?'-':s.hpa.cpu+'%';$('cpu').className='big '+(s.hpa.cpu>70?'hot':'cool')}
+    $('vus').textContent=s.load.vus;
+    $('pods').innerHTML=s.pods.map(p=>`<div class="pod ${p.terminating?'term':p.ready?'ok':'wait'}">${p.name}</div>`).join('');
+    draw(s.history);
+  }catch(e){$('clock').textContent='sin conexión con el servidor local'}
+}
+tick();setInterval(tick,3000);
+</script></body></html>
